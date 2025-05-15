@@ -9,32 +9,21 @@ open IN, "<", $sample  or die $!;
 my @list;
 while(<IN>){
 	chomp;
-	my ($pedigree, $proband, $breed,$sex, $dam, $sire) = split /\s+/;
-	open GVCFLIST, ">/xtdisk/wanggd_kiz/zhangsj/pedigree/data/vcf/$pedigree.gvcf.list";
-	print GVCFLIST "/xtdisk/wanggd_kiz/zhangsj/pedigree/data/gvcf/$proband.rawvariant.g.vcf.gz
-/xtdisk/wanggd_kiz/zhangsj/pedigree/data/gvcf/$dam.rawvariant.g.vcf.gz
-/xtdisk/wanggd_kiz/zhangsj/pedigree/data/gvcf/$sire.rawvariant.g.vcf.gz
-";
-	open DGPED, ">/xtdisk/wanggd_kiz/zhangsj/pedigree/work/ped/$pedigree.dg.ped";
-	print DGPED "$pedigree\t$proband\t$dam\t$sire\t$sex\t0";
-	open TDPED, ">/xtdisk/wanggd_kiz/zhangsj/pedigree/work/ped/$pedigree.td.ped";
-	print TDPED "$pedigree\t$dam\t0\t0\t1
-$pedigree\t$sire\t0\t0\t2
-$pedigree\t$proband\t$dam\t$sire\t$sex
-";
-	open PEDIGREE, ">/xtdisk/wanggd_kiz/zhangsj/pedigree/work/script/$pedigree.sh";
+	my ($pedigree, $proband, $depth_proband,$sex, $dam, $depth_dam, $sire, $depth_sire) = split /\s+/;
+	open PEDIGREE, ">/xtdisk/wanggd_kiz/zhangsj/pedigree/work/script/$pedigree\_dep.sh";
 	print PEDIGREE "#!/bin/bash
 
-#PBS -N $pedigree.sh
-#PBS -o $pedigree.sh.stdout
-#PBS -e $pedigree.sh.stderr
+#PBS -N $pedigree\_dep.sh
+#PBS -o $pedigree\_dep.sh.stdout
+#PBS -e $pedigree\_dep.sh.stderr
 #PBS -q core40
-#PBS -l mem=16gb,walltime=572:00:00,nodes=1:ppn=4
+#PBS -l mem=4gb,walltime=572:00:00,nodes=1:ppn=1
 #HSCHED -s hschedd
-#PPN limit 4
+#PPN limit 1
 # Description:
 set -e
 set -u
+
 
 WORK=/xtdisk/wanggd_kiz/zhangsj/pedigree/work
 REF=/xtdisk/wanggd_kiz/zhangsj/ref/Canis_familiaris.CanFam3.1.dna.toplevel.fa
@@ -47,7 +36,7 @@ BCFTOOLS=/xtdisk/wanggd_kiz/zhangsj/bin/software/smcpp/bin/bcftools
 CHRBED=/xtdisk/wanggd_kiz/zhangsj/pedigree/data/vcf/intervals.list
 DENOVOGEAR=/xtdisk/wanggd_kiz/zhangsj/bin/software/denovogear-0.5.4-Linux-x86_64/bin/denovogear
 TRIODENOVO=/xtdisk/wanggd_kiz/zhangsj/bin/software/triodenovo.0.06/bin/triodenovo
-FILTERE=/xtdisk/wanggd_kiz/zhangsj/bin/filtere.7.pl
+FILTERE=/xtdisk/wanggd_kiz/zhangsj/bin/filtere.pl
 
 
 
