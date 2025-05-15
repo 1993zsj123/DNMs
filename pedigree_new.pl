@@ -162,6 +162,6 @@ java -Xmx8g  -jar \$GATK -R \$REF -T SelectVariants \\
 \$BCFTOOLS  view  -s $dam,$sire,$proband \\
 /xtdisk/wanggd_kiz/zhangsj/pedigree/work/$pedigree/gatk/trio_$pedigree.filtered.recode.vcf > /xtdisk/wanggd_kiz/zhangsj/pedigree/work/$pedigree/gatk/trio_$pedigree.filtered.vcf
 
-perl \$FILTERE /xtdisk/wanggd_kiz/zhangsj/pedigree/work/$pedigree/gatk/trio_$pedigree.filtered.vcf >/xtdisk/wanggd_kiz/zhangsj/pedigree/work/$pedigree/overlap/$pedigree\_overlap.dnm.vcf
+perl \$FILTERE /xtdisk/wanggd_kiz/zhangsj/pedigree/work/$pedigree/gatk/trio_$pedigree.filtered.vcf $depth_dam $depth_sire $depth_proband >/xtdisk/wanggd_kiz/zhangsj/pedigree/work/$pedigree/gatk/$pedigree\_gatk.dep.vcf
 ";
 }
