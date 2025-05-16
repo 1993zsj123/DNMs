@@ -10,7 +10,7 @@ my @list;
 while(<IN>){
 	chomp;
 	my ($pedigree, $proband, $probandcrr, $breed, $sex, $dam, $damcrr, $sire, $sirecrr) = split /\s+/;
-	open PEDIGREE, ">/xtdisk/wanggd_kiz/zhangsj/pedigree/analysis/bam_filter/script/$pedigree.sh";
+	open PEDIGREE, ">/xtdisk/wanggd_kiz/zhangsj/pedigree/analysis/bam_filter/right/script/$pedigree.sh";
 	print PEDIGREE "#!/bin/bash
 
 #PBS -N $pedigree.sh
@@ -37,15 +37,34 @@ DENOVOGEAR=/xtdisk/wanggd_kiz/zhangsj/bin/software/denovogear-0.5.4-Linux-x86_64
 TRIODENOVO=/xtdisk/wanggd_kiz/zhangsj/bin/software/triodenovo.0.06/bin/triodenovo
 FILTERE=/xtdisk/wanggd_kiz/zhangsj/bin/filtere.pl
 
-#samtools index /asnas/wanggd_kiz/zhangsj/pedigree/data/bam/$probandcrr/$probandcrr.bam
+samtools index /xtdisk/wanggd_kiz/zhangsj/pedigree/data/bam/$probandcrr/$probandcrr.bam
+samtools index /xtdisk/wanggd_kiz/zhangsj/pedigree/data/bam/$damcrr/$damcrr.bam
+samtools index /xtdisk/wanggd_kiz/zhangsj/pedigree/data/bam/$sirecrr/$sirecrr.bam
 
-mkdir -p /xtdisk/wanggd_kiz/zhangsj/pedigree/analysis/bam_filter/reads/$proband
-for i in \$(cat /xtdisk/wanggd_kiz/zhangsj/pedigree/analysis/bam_filter/dnm/$pedigree\_overlap.dnm.7.vcf.chr)\; \\
-do samtools tview  -p  \$i /asnas/wanggd_kiz/zhangsj/pedigree/data/bam/$probandcrr/$probandcrr.bam \\
--d T > /xtdisk/wanggd_kiz/zhangsj/pedigree/analysis/bam_filter/reads/$proband/$proband.\$i.reads \; done
+mkdir -p /xtdisk/wanggd_kiz/zhangsj/pedigree/analysis/bam_filter/right/reads/proband
+mkdir -p /xtdisk/wanggd_kiz/zhangsj/pedigree/analysis/bam_filter/right/reads/sire
+mkdir -p /xtdisk/wanggd_kiz/zhangsj/pedigree/analysis/bam_filter/right/reads/dam
+for i in \$(cat /xtdisk/wanggd_kiz/zhangsj/pedigree/analysis/bam_filter/right/dnm/$pedigree\_gatk.dnm.list)\; \\
+do samtools tview  -p  \$i /xtdisk/wanggd_kiz/zhangsj/pedigree/data/bam/$probandcrr/$probandcrr.bam \\
+-d T > /xtdisk/wanggd_kiz/zhangsj/pedigree/analysis/bam_filter/right/reads/proband/$proband.\$i.reads \; done
 
-for y in \$(ls /xtdisk/wanggd_kiz/zhangsj/pedigree/analysis/bam_filter/reads/$proband/$proband.*reads)\; \\
+for i in \$(cat /xtdisk/wanggd_kiz/zhangsj/pedigree/analysis/bam_filter/right/dnm/$pedigree\_gatk.dnm.list)\; \\
+do samtools tview  -p  \$i /xtdisk/wanggd_kiz/zhangsj/pedigree/data/bam/$sirecrr/$sirecrr.bam \\
+-d T > /xtdisk/wanggd_kiz/zhangsj/pedigree/analysis/bam_filter/right/reads/sire/$proband.\$i.reads \; done
+
+for i in \$(cat /xtdisk/wanggd_kiz/zhangsj/pedigree/analysis/bam_filter/right/dnm/$pedigree\_gatk.dnm.list)\; \\
+do samtools tview  -p  \$i /xtdisk/wanggd_kiz/zhangsj/pedigree/data/bam/$damcrr/$damcrr.bam \\
+-d T > /xtdisk/wanggd_kiz/zhangsj/pedigree/analysis/bam_filter/right/reads/dam/$proband.\$i.reads \; done
+
+for x in \$(ls /xtdisk/wanggd_kiz/zhangsj/pedigree/analysis/bam_filter/right/reads/proband/$proband.*reads)\; \\
+do sed \"1,3d\" \$x |cut -b1 | sed '/^[  ]*\$\/d' |tr a-z A-Z | sort | uniq -c | sort -n | sed 's/^[  ]*//' |sed \"s/ /\\t/\" | sed \":label\;N\;s/\\n/\\t/\;b label\">\$x.num \; done
+
+for y in \$(ls /xtdisk/wanggd_kiz/zhangsj/pedigree/analysis/bam_filter/right/reads/sire/$proband.*reads)\; \\
 do sed \"1,3d\" \$y |cut -b1 | sed '/^[  ]*\$\/d' |tr a-z A-Z | sort | uniq -c | sort -n | sed 's/^[  ]*//' |sed \"s/ /\\t/\" | sed \":label\;N\;s/\\n/\\t/\;b label\">\$y.num \; done
+
+for z in \$(ls /xtdisk/wanggd_kiz/zhangsj/pedigree/analysis/bam_filter/right/reads/dam/$proband.*reads)\; \\
+do sed \"1,3d\" \$z |cut -b1 | sed '/^[  ]*\$\/d' |tr a-z A-Z | sort | uniq -c | sort -n | sed 's/^[  ]*//' |sed \"s/ /\\t/\" | sed \":label\;N\;s/\\n/\\t/\;b label\">\$z.num \; done
 
 ";
 }
+
