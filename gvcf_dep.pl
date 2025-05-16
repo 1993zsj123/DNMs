@@ -33,26 +33,18 @@ GATK=/xtdisk/wanggd_kiz/zhangsj/bin/software/GenomeAnalysisTK.jar
 VCFTOOLS=/xtdisk/wanggd_kiz/zhangsj/bin/anaconda3/bin/vcftools
 BCFTOOLS=/xtdisk/wanggd_kiz/zhangsj/bin/software/smcpp/bin/bcftools
 CHRBED=/xtdisk/wanggd_kiz/zhangsj/pedigree/data/vcf/intervals.list
-DENOVOGEAR=/xtdisk/wanggd_kiz/zhangsj/bin/software/denovogear-0.5.4-Linux-x86_64/bin/denovogear
-TRIODENOVO=/xtdisk/wanggd_kiz/zhangsj/bin/software/triodenovo.0.06/bin/triodenovo
 FILTERE=/xtdisk/wanggd_kiz/zhangsj/bin/filtere.pl
 
 
 
 cd /asnas/wanggd_kiz/zhangsj/pedigree/mutation_rate/split/chr/work
 
-#java -Xmx4g -Xms4g -Djava.io.tmpdir=1rst/temp \\
-#-jar \$GATK \\
-#-T CombineGVCFs \\
-#-R \$REF \\
-#-L \$CHRBED \\
-#-V /xtdisk/wanggd_kiz/zhangsj/pedigree/data/vcf/$pedigree.gvcf.list \\
-#-o $pedigree\_all.g.vcf.gz
 
-#vcftools --gzvcf $pedigree\_all.g.vcf.gz  --bed  /asnas/wanggd_kiz/zhangsj/pedigree/mutation_rate/split/chr/script/dog_cpgIslandExt.bed --recode --out $pedigree\_cpg
-#cut -f 10,11,12 $pedigree\_cpg.recode.vcf | awk -F \":\" \'\$3>=$depa1 && \$3<=$depa2 && \$7>=$depb1 && \$7<=$depb2 && \$11>=$depc1 && \$11<=$depc2 {print \$0}\' | wc -l >$pedigree.cpg.num
-#vcftools --gzvcf /xtdisk/wanggd_kiz/zhangsj/pedigree/data/vcf/$pedigree.snp.filtered.vcf.gz   --bed  /asnas/wanggd_kiz/zhangsj/pedigree/mutation_rate/split/chr/script/dog_cpgIslandExt.bed --recode --out $pedigree\_cpg.snp
-#cut -f 10,11,12 $pedigree\_cpg.snp.recode.vcf | awk -F \":\" \'\$3>=$depa1 && \$3<=$depa2 && \$7>=$depb1 && \$7<=$depb2 && \$11>=$depc1 && \$11<=$depc2 && \$$awk1  !~ /0\\/0/  && \$$awk2 !~ /0\\/0/{print \$0}\' | wc -l >>$pedigree.cpg.num
+
+vcftools --gzvcf $pedigree\_all.g.vcf.gz  --bed  /asnas/wanggd_kiz/zhangsj/pedigree/mutation_rate/split/chr/script/dog_cpgIslandExt.bed --recode --out $pedigree\_cpg
+cut -f 10,11,12 $pedigree\_cpg.recode.vcf | awk -F \":\" \'\$3>=$depa1 && \$3<=$depa2 && \$7>=$depb1 && \$7<=$depb2 && \$11>=$depc1 && \$11<=$depc2 {print \$0}\' | wc -l >$pedigree.cpg.num
+vcftools --gzvcf /xtdisk/wanggd_kiz/zhangsj/pedigree/data/vcf/$pedigree.snp.filtered.vcf.gz   --bed  /asnas/wanggd_kiz/zhangsj/pedigree/mutation_rate/split/chr/script/dog_cpgIslandExt.bed --recode --out $pedigree\_cpg.snp
+cut -f 10,11,12 $pedigree\_cpg.snp.recode.vcf | awk -F \":\" \'\$3>=$depa1 && \$3<=$depa2 && \$7>=$depb1 && \$7<=$depb2 && \$11>=$depc1 && \$11<=$depc2 && \$$awk1  !~ /0\\/0/  && \$$awk2 !~ /0\\/0/{print \$0}\' | wc -l >>$pedigree.cpg.num
 
 
 zgrep \'^X\' $pedigree\_all.g.vcf.gz |awk -v FS=\"\\t\" -v OFS=\"\\t\" '\$2<=6800000\' | cut -f 10,11,12 | awk -F \":\" \'\$3>=$depa1 && \$3<=$depa2 && \$7>=$depb1 && \$7<=$depb2 && \$11>=$depc1 && \$11<=$depc2 {print \$0}\' | wc -l >$pedigree.PAR.num 
@@ -60,10 +52,10 @@ zgrep \'^X\' /xtdisk/wanggd_kiz/zhangsj/pedigree/data/vcf/$pedigree.snp.filtered
 zgrep \'^X\' $pedigree\_all.g.vcf.gz | cut -f 10,11,12 | awk -F \":\" \'\$3>=$depa1 && \$3<=$depa2 && \$7>=$depb1 && \$7<=$depb2 && \$11>=$depc1 && \$11<=$depc2 {print \$0}\' | wc -l >$pedigree.X.num 
 zgrep \'^X\' /xtdisk/wanggd_kiz/zhangsj/pedigree/data/vcf/$pedigree.snp.filtered.vcf.gz | cut -f 10,11,12| awk -F \":\" \'\$3>=$depa1 && \$3<=$depa2 && \$7>=$depb1 && \$7<=$depb2 && \$11>=$depc1 && \$11<=$depc2 && \$$awk1  !~ /0\\/0/  && \$$awk2 !~ /0\\/0/{print \$0}\' | wc -l >>$pedigree.X.num 
 
-#for i in \{1..38\} \; 
-#do zgrep \"^\$i\" $pedigree\_all.g.vcf.gz | cut -f 10,11,12 | awk -F \":\" \'\$3>=$depa1 && \$3<=$depa2 && \$7>=$depb1 && \$7<=$depb2 && \$11>=$depc1 && \$11<=$depc2 {print \$0}\' | wc -l >$pedigree.\$i.num \; done 
-#for i in \{1..38\} \; 
-#do zgrep \"^\$i\" /xtdisk/wanggd_kiz/zhangsj/pedigree/data/vcf/$pedigree.snp.filtered.vcf.gz | cut -f 10,11,12| awk -F \":\" \'\$3>=$depa1 && \$3<=$depa2 && \$7>=$depb1 && \$7<=$depb2 && \$11>=$depc1 && \$11<=$depc2 && \$$awk1  !~ /0\\/0/  && \$$awk2 !~ /0\\/0/{print \$0}\' | wc -l >>$pedigree.\$i.num \;done
+for i in \{1..38\} \; 
+do zgrep \"^\$i\" $pedigree\_all.g.vcf.gz | cut -f 10,11,12 | awk -F \":\" \'\$3>=$depa1 && \$3<=$depa2 && \$7>=$depb1 && \$7<=$depb2 && \$11>=$depc1 && \$11<=$depc2 {print \$0}\' | wc -l >$pedigree.\$i.num \; done 
+for i in \{1..38\} \; 
+do zgrep \"^\$i\" /xtdisk/wanggd_kiz/zhangsj/pedigree/data/vcf/$pedigree.snp.filtered.vcf.gz | cut -f 10,11,12| awk -F \":\" \'\$3>=$depa1 && \$3<=$depa2 && \$7>=$depb1 && \$7<=$depb2 && \$11>=$depc1 && \$11<=$depc2 && \$$awk1  !~ /0\\/0/  && \$$awk2 !~ /0\\/0/{print \$0}\' | wc -l >>$pedigree.\$i.num \;done
 
 
 
